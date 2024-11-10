@@ -15,15 +15,20 @@ $subjects = isset($_SESSION['subjects']) ? $_SESSION['subjects'] : [];
 // Get current page (default is dashboard)
 $currentPage = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
 
+// Define an array of users with their email and password
+$users = [
+    ['email' => 'user1@gmail.com', 'password' => 'password1'],
+    ['email' => 'user2@gmail.com', 'password' => 'password2'],
+    ['email' => 'user3@gmail.com', 'password' => 'password3'],
+    ['email' => 'user4@gmail.com', 'password' => 'password4'],
+    ['email' => 'user5@gmail.com', 'password' => 'password5']
+];
+
 // Handle login
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
     $email = trim($_POST["email"]);
     $password = trim($_POST["password"]);
     
-    // Dummy credentials for login
-    $dummy_email = "user@gmail.com";
-    $dummy_password = "password";
-
     // Validate email
     if (empty($email)) {
         $errorMessages[] = "Email is required";
@@ -38,12 +43,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["login"])) {
 
     // Check login credentials
     if (empty($errorMessages)) {
-        if ($email === $dummy_email && $password === $dummy_password) {
-            $_SESSION['isLoggedIn'] = true;
-            $_SESSION['loggedInUser'] = $email;
-            $isLoggedIn = true;
-            $loggedInUser = $email;
-        } else {
+        // Check if the provided email and password match any user in the array
+        $userFound = false;
+        foreach ($users as $user) {
+            if ($email === $user['email'] && $password === $user['password']) {
+                $_SESSION['isLoggedIn'] = true;
+                $_SESSION['loggedInUser'] = $email;
+                $isLoggedIn = true;
+                $loggedInUser = $email;
+                $userFound = true;
+                break;
+            }
+        }
+
+        if (!$userFound) {
             $errorMessages[] = "Invalid email or password";
         }
     }
@@ -184,9 +197,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["editSubject"])) {
                 </div>
 
                 <div class="dashboard-section">
-                    <h3>Register a Student</h3>
-                    <p>This section allows you to register a new student in the system. Click the button below to proceed with the registration process.</p>
-                    <button>Register</button>
+    <h3>Register a Student</h3>
+    <p>This section allows you to register a new student in the system. Click the button below to proceed with the registration process.</p>
+    <a href="register_student.php"><button>Register</button></a>
+</div>
                 </div>
             </div>
         <?php endif; ?>
